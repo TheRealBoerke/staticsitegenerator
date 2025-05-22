@@ -14,7 +14,7 @@ class TextNode():
             raise TypeError("'text_type' must be an instance of a TextType enum")
         if (text_type == TextType.LINKS or text_type == TextType.IMAGES) and url == None:
             raise ValueError("'url' cannot be None when text type equals 'links' or 'images'")
-            
+
         self.text = text
         self.text_type = text_type
         if not(text_type == TextType.LINKS or text_type == TextType.IMAGES) and url != None:
@@ -23,6 +23,8 @@ class TextNode():
             self.url = url
     
     def __eq__(self, other):
+        if not isinstance(other, TextNode):
+            return False
         return (self.text == other.text and
                 self.text_type == other.text_type and
                 self.url == other.url)

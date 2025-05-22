@@ -11,7 +11,6 @@ class TestTextNode(unittest.TestCase):
     def test_eq_wrong_arguments(self):
         node = TextNode("Hello", TextType.BOLD_TEXT, url="https://boot.dev")
         node2 = TextNode("Hello", TextType.BOLD_TEXT, url="https://boot.dev")
-        print(node2)
         self.assertEqual(node, node2)
 
     def test_not_eq(self):
