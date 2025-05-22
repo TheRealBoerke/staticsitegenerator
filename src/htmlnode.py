@@ -6,6 +6,17 @@ class HTMLNode:
         self.children = children
         self.props = props
 
+    def __eq__(self, other):
+        if not isinstance(other, HTMLNode):
+            return False
+        return (self.tag == other.tag and
+                self.value == other.value and
+                self.children == other.children and
+                self.props == other.props)
+
+    def __repr__(self):
+        return f"Tag: {self.tag}, Value: {self.value}, Children: {self.children}, Props: {self.props}"
+    
     def to_html(self):
         raise NotImplementedError
 
@@ -21,14 +32,43 @@ class HTMLNode:
         else:
             return ""
 
+class LeafNode(HTMLNode):
+    def __init__(self, tag, value, props=None):
+        if not isinstance(tag, str):
+            raise TypeError("'tag' must be a string")
+        if not isinstance(value, str):
+            raise TypeError("'value' must be a string")
+        if props is not None and not isinstance(props, dict):
+            raise TypeError("'props' must be a dict or None")       
+        
+        super().__init__(tag, value, None, props)
+        self.tag = tag
+        self.value = value
+        self.props = props
+    
     def __eq__(self, other):
-        if not isinstance(other, HTMLNode):
+        if not isinstance(other, LeafNode):
             return False
         return (self.tag == other.tag and
                 self.value == other.value and
-                self.children == other.children and
                 self.props == other.props)
 
     def __repr__(self):
-        output = f"Tag: {self.tag}, Value: {self.value}, Children: {self.children}, Props: {self.props_to_html()}"
-        return output
+        return self.to_html()
+
+    def to_html(self):
+        if self.value is None:
+            raise ValueError("'value' cannot be None")
+        if self.tag is None:
+            return self.value
+        else:
+            tag_close = f"</{self.tag}>"
+
+            if self.props is None:
+                tag_open = f"<{self.tag}>"
+            else:
+                tag_open = f"<{self.tag} {self.props_to_html()}>"
+            
+            return f"{tag_open}{self.value}{tag_close}"
+
+    
