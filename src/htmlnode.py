@@ -15,7 +15,7 @@ class HTMLNode:
                 self.props == other.props)
 
     def __repr__(self):
-        return f"Tag: {self.tag}, Value: {self.value}, Children: {self.children}, Props: {self.props}"
+        return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
     
     def to_html(self):
         raise NotImplementedError
@@ -24,7 +24,7 @@ class HTMLNode:
         # Initially I entered Dictionary, but since it's a Python 
         if self.props is not None and not isinstance(self.props, dict):
             raise TypeError("'props' should be of type 'dict' or None")
-        if self.props != None:
+        if self.props is not None:
             output = ""
             for key, value in self.props.items():
                 output += f"{key}=\"{value}\" "
@@ -34,10 +34,14 @@ class HTMLNode:
 
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
-        if not isinstance(tag, str):
+        if (tag is None):
+            pass
+        elif (not isinstance(tag, str)):
             raise TypeError("'tag' must be a string")
+        
         if not isinstance(value, str):
             raise TypeError("'value' must be a string")
+        
         if props is not None and not isinstance(props, dict):
             raise TypeError("'props' must be a dict or None")       
         
@@ -59,7 +63,7 @@ class LeafNode(HTMLNode):
     def to_html(self):
         if self.value is None:
             raise ValueError("'value' cannot be None")
-        if self.tag is None:
+        if self.tag is None or self.tag == "":
             return self.value
         else:
             tag_close = f"</{self.tag}>"
@@ -71,4 +75,34 @@ class LeafNode(HTMLNode):
             
             return f"{tag_open}{self.value}{tag_close}"
 
+class ParentNode(HTMLNode):
+    def __init__(self, tag, children, props = None):
+        super().__init__(tag = tag, children = children, props = props)
+        if tag is not None or not isinstance(tag, str):
+            raise TypeError("'tag' must be a string")
+        if props is not None and not isinstance(props, dict):
+            raise TypeError("'props' must be a dict or None")
+        
+    def __eq__(self, other):
+        if not isinstance(other, ParentNode):
+            return False
+        return (self.tag == other.tag and
+                self.children == other.children and
+                self.props == other.props)
     
+    def __repr__(self):
+        return f"ParentNode({self.tag},{self.children},{self.properties})"
+
+    def to_html(self):
+        tag_close = f"</{self.tag}>"
+
+        # Yes, I know this could be done in one line... But hey, I'm a n00b...
+        props_string = self.props_to_html()
+        if props_string:
+            tag_open = f"<{self.tag} {props_string}>"
+        else:
+            tag_open = f"<{self.tag}>"
+
+        child_nodes_html = "".join(child.to_html() for child in self.children)
+
+        return f"{tag_open}{child_nodes_html}{tag_close}"

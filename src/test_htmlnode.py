@@ -30,9 +30,9 @@ class TestHTMLNode(unittest.TestCase):
     def test_repr_output(self):
         node = HTMLNode("p", "Hello", None, {"class": "intro"})
         output = repr(node)
-        self.assertIn("Tag: p", output)
-        self.assertIn("Value: Hello", output)
-        self.assertIn("Props: {'class':", output)
+        self.assertIn("HTMLNode(", output)
+        self.assertIn("Hello", output)
+        self.assertIn("{'class':", output)
 
     # Purpose: Make sure that defaults are applied correctly
     def test_arguments_defaults(self):
