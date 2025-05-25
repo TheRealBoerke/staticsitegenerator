@@ -44,6 +44,8 @@ class Converter():
 
         return new_nodes
 
+### Everything below this point is used for interactive testing ###
+
 def test_split():
     text_nodes = [TextNode("**bold text** normal text", TextType.TEXT),
                   TextNode("normal text **bold text** normal text", TextType.TEXT),
